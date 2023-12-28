@@ -31,7 +31,43 @@ The exporter connects to the sensor over bluetooth and exposes the following met
     python src/main.py
     ```
 
-1. Scrape the metrics with Prometheus or view them in the browser: `http://localhost:80`
+1. Test the exporter by view the output in a browser: `http://localhost:80`
+
+## Scraping and Dashboard
+
+1. Add the exporter to your prometheus config:
+
+    ```yaml
+    scrape_configs:
+      - job_name: co2-monitor
+        static_configs:
+          - targets:
+              - {IP ADDRESS OF EXPORTER}:{EXPORTER_PORT}
+            labels: null
+            job: co2-monitor
+    ```
+
+    OR if you're using Prometheus Operator in Kubernetes, create the following ScrapeConfig CRD:
+
+    ```yaml
+    apiVersion: monitoring.coreos.com/v1alpha1
+    kind: ScrapeConfig
+    metadata:
+      name: co2-monitor
+      namespace: monitoring
+      labels:
+        release: kube-prometheus-stack
+    spec:
+      staticConfigs:
+        - labels:
+          job: co2-monitor
+          targets:
+            - {IP ADDRESS OF EXPORTER}:{EXPORTER_PORT}
+    ```
+
+2. Import the Grafana dashboard from `dashboard.json` into your Grafana instance. Choose the Prometheus data source that is configured to scrape the exporter.
+
+    <img src="dashboard.png" alt="Grafana Dashboard showing air quality metrics." width="75%" height="auto">
 
 ## Notes & credits
 
