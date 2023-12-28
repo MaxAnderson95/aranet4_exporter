@@ -48,7 +48,7 @@ class AranetMetrics:
                 readings = self._aranet.current_readings
             else:
                 raise ConnectionError("No sensor connected")
-        except Exception as e:
+        except (Exception, Aranet4Exception) as e:
             logger.error(f"Failed to fetch readings from sensor: {e}")
             self._connected = False
             self._aranet = None
